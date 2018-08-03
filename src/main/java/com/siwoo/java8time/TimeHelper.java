@@ -1,6 +1,7 @@
 package com.siwoo.java8time;
 
 import org.junit.Test;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +24,13 @@ public class TimeHelper {
 
     public static void display(LocalDateTime dateTime) {
         System.out.println("DateTime Formatted: " + dateTimeFormatter.format(dateTime));
+    }
+
+    public static LocalDate parse(String string) {
+        if(string != null && string.trim().length() > 0) {
+            return LocalDate.parse(string);
+        }
+        throw new IllegalArgumentException("Not valid input " + string);
     }
 
     @Test
