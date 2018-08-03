@@ -1,12 +1,13 @@
 package com.siwoo.java8time;
 
+import org.apache.tomcat.jni.Local;
 import org.junit.Test;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.util.Assert;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -83,6 +84,38 @@ public class TimeHelper {
         throw new IllegalArgumentException("Not know field " + field);
     }
 
+    public enum Units {
+        YEAR(ChronoUnit.YEARS, "년"),
+        MONTH(ChronoUnit.MONTHS, "월"),
+        DAY(ChronoUnit.DAYS, "일"),
+        WEEK(ChronoUnit.WEEKS, "주"),
+        HOUR(ChronoUnit.HOURS, "시"),
+        MINUTE(ChronoUnit.MINUTES, "분"),
+        SECOND(ChronoUnit.SECONDS, "초"),
+        NANO(ChronoUnit.NANOS, "나노");
+        private ChronoUnit unit;
+        private String value;
+
+        Units(ChronoUnit chronoUnit, String korean) {
+            unit = chronoUnit;
+            this.value = korean;
+        }
+
+        static Units of(String korean) {
+            switch (korean) {
+                case "년": return YEAR;
+                case "월": return MONTH;
+                case "일": return DAY;
+                default: throw new UnsupportedOperationException("Not supported value " + korean);
+            }
+        }
+    }
+    public static LocalDate plus(String field, long value, LocalDate localDate) {
+        ChronoUnit unit =  Units.of(field).unit;
+        return localDate.plus(value, unit);
+
+    }
+
     @Test
     public void test() {
         TimeHelper.display(LocalDate.now());
@@ -124,6 +157,21 @@ public class TimeHelper {
         localTime = TimeHelper.with("SECOND", "59", localTime);
         assertEquals(localTime.get(ChronoField.SECOND_OF_MINUTE), 59);
         System.out.println(localTime);
+
+        localDate = LocalDate.now();
+        localDate = TimeHelper.plus("년", -1, localDate);
+        assertEquals(localDate.getYear(), 2017);
+        System.out.println(localDate);
+
+        localDate = TimeHelper.plus("월", 2, localDate);
+        assertEquals(localDate.getMonth(), Month.of(10));
+        System.out.println(localDate);
+
+        localDate = TimeHelper.plus("일", -2, localDate);
+        assertEquals(localDate.getDayOfMonth(), 1);
+        System.out.println(localDate);
+
+
     }
 
 }
